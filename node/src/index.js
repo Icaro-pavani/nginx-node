@@ -12,7 +12,10 @@ const config = {
 };
 const connection = mysql.createConnection(config);
 
-const sql = `INSERT INTO people(name) values('${faker.person.firstName()}')`;
+const createTableSql =
+  "CREATE TABLE IF NOT EXISTS people (id INT NOT NULL auto_increment, name varchar(255), primary key(id))";
+connection.query(createTableSql);
+const sql = `INSERT INTO people(name) values('${faker.person.firstName()}'),('${faker.person.firstName()}'),('${faker.person.firstName()}')`;
 connection.query(sql);
 connection.end();
 
@@ -21,10 +24,8 @@ app.get("/", (req, res) => {
   const connection = mysql.createConnection(config);
   const getNamesSql = "SELECT name FROM people";
   connection.query(getNamesSql, function (err, results) {
-    console.log(results[0].name);
     if (err) console.log(err);
     results.forEach((result) => {
-      console.log(result.name);
       answer += `<li>${result.name}</li>`;
     });
     answer += "</ul>";
